@@ -136,7 +136,7 @@ technical_agent = Agent(
         "You are an expert grader for technical exams. "
         "Given the question, the student’s answer, and an optional rubric (in markdown), "
         "assign scores for correctness, depth, and clarity, then justify each score."
-    ),
+),
     # wrap ExamEvaluation to disable strict JSON schema
     output_type=AgentOutputSchema(ExamEvaluation, strict_json_schema=False),
     tools=[extract_pdf_to_markdown],  # for PDF rubrics or questions :contentReference[oaicite:1]{index=1}
@@ -163,7 +163,7 @@ vc_pitch_agent = Agent(
         "and presentation style. Provide detailed feedback."
     ),
     output_type=AgentOutputSchema(ExamEvaluation, strict_json_schema=False),
-    tools=[analyze_audio],
+    tools=[extract_pdf_to_markdown, analyze_audio],
     # apply guardrail here: if the student hasn't provided mp3, tripwire
     input_guardrails=[ InputGuardrail(guardrail_function=require_audio) ],
 )

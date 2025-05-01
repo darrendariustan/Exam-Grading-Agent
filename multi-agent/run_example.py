@@ -7,7 +7,7 @@ import asyncio
 from dotenv import load_dotenv
 load_dotenv()   # looks for a file named “.env” in cwd
 
-# 2) (Optional) confirm we have the key
+# 2) confirm we have the key
 assert os.getenv("OPENAI_API_KEY"), "Missing OPENAI_API_KEY in environment"
 
 # 3) Now import and run your agents
