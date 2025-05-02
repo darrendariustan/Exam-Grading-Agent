@@ -2,7 +2,7 @@
 
 This repository collects three prototype exam‑grading systems—one each for technical, narrative/strategy and VC‑pitch exams—and a work‑in‑progress multi‑agent orchestration built with the OpenAI Agents SDK. Each subfolder contains an independent end‑to‑end example; the `multi‑agent` folder shows how they can be combined with triage, guardrails and handoffs.
 
-> Agents 4 Education showcases how LLM‑powered agents can collaborate to automate formative assessment across different exam types, as part of a Master’s capstone in Artificial Intelligence.
+> Agents 4 Education showcases how LLM‑powered agents can collaborate to automate formative assessment across different exam types, as part of a Master’s in Business Analytics capstone project.
 
 ## Repository layout
 
