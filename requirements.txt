@@ -1,0 +1,4 @@
+openai
+librosa
+soundfile
+python-dotenv
