@@ -2,3 +2,5 @@ openai
 librosa
 soundfile
 python-dotenv
+pydantic
+pdfplumber
