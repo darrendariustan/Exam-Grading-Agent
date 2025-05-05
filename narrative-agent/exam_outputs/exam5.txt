@@ -1,0 +1,76 @@
+MSc Business Analytics – Exam 5
+===============================
+
+Instructions:
+Answer ALL questions. Use clear analytical reasoning, cite frameworks where relevant (e.g., network-effects taxonomy, AI adoption S-curve). Time allowed: 120 min.
+
+Question 41 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"The famous 2x2 tables so used in business schools respond to the same need: grouping, in a small number of concepts, the set of discussion to facilitate your memory."
+
+(Expected length: 3–4 sentences)
+
+Question 42 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"*** The second example, also from the world of research, leads us to 2017."
+
+(Expected length: 3–4 sentences)
+
+Question 43 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Competing with complementors: An empirical look at Amazon.com."
+
+(Expected length: 3–4 sentences)
+
+Question 44 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"The consultants, economic and academic journalists incorporate it into their professional language and disseminate it."
+
+(Expected length: 3–4 sentences)
+
+Question 45 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"We can also compose the data -products of such for us that we further increase their multipliers."
+
+(Expected length: 3–4 sentences)
+
+Question 46 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Today this will seem simple, and in fact it is one of the first exercises that most students do in their studies about the world, but in 2012 it was the maximum we knew how to do."
+
+(Expected length: 3–4 sentences)
+
+Question 47 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"NETWORK EFFECTS REVISITED Network effects, traditionally viewed in economics as equivalent to network externalities, have been foundational to our understanding of the value dynamics in networks and platforms."
+
+(Expected length: 3–4 sentences)
+
+Question 48 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Everything comes to an end this innovation process based on a market mechanism produces an accelerated exploration that quickly exhausts the bus - remains of new viable proposals."
+
+(Expected length: 3–4 sentences)
+
+Question 49 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"4.1 Exploiting Network Specific Externalities Leveraging the inherent externalities of a specific network forms the simplest strategy to generate network effects."
+
+(Expected length: 3–4 sentences)
+
+Question 50 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Hype Loop is a market mechanism for the exploration and widening of the border of existing possibilities, in short, it is an innovation mechanism."
+
+(Expected length: 3–4 sentences)
+

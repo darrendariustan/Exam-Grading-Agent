@@ -1,0 +1,76 @@
+MSc Business Analytics – Exam 2
+===============================
+
+Instructions:
+Answer ALL questions. Use clear analytical reasoning, cite frameworks where relevant (e.g., network-effects taxonomy, AI adoption S-curve). Time allowed: 120 min.
+
+Question 11 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Everything changes, the organization also the organizational structure is no stranger to all this flood of campers."
+
+(Expected length: 3–4 sentences)
+
+Question 12 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"The second type of network effects, closely related to prime - ro, is the one that is based on social reputation management."
+
+(Expected length: 3–4 sentences)
+
+Question 13 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Very often the first to enter is not the winner, and this has been the case of almost all platforms in the digital age."
+
+(Expected length: 3–4 sentences)
+
+Question 14 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Without data, there is no learning, and without the application of new insights, data cannot evolve into its next iteration."
+
+(Expected length: 3–4 sentences)
+
+Question 15 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"These are the two levers of change, so every economic analysis of the impact of a disruption must begin by analyzing these variables."
+
+(Expected length: 3–4 sentences)
+
+Question 16 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"This is one of the reasons why we use abs - traction: it allows us to group concepts and remember them more easily."
+
+(Expected length: 3–4 sentences)
+
+Question 17 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"As hinted at above, network externalities are described as outcomes stemming from the network's design and its potential capabilities, which can give rise to network effects when utilized effectively."
+
+(Expected length: 3–4 sentences)
+
+Question 18 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"(2019) further explored data network effects with a model that highlights capabilities of the platform such as speed and accuracy of predictions together with data stewardship, platform legitimation, and user-centric design."
+
+(Expected length: 3–4 sentences)
+
+Question 19 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"The modern interpretation of this concept, especially in the context of connectivity (Afuah, 2013; Van Alstyne, Parker & Choudary, 2016), posits that the addition of more users enhances the platform’s worth by broadening the scope of interaction."
+
+(Expected length: 3–4 sentences)
+
+Question 20 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"This normally implies visualizing not only benefits at a general level, but must also translate into shared and individualized benefits for the different groups."
+
+(Expected length: 3–4 sentences)
+

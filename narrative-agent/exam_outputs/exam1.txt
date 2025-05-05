@@ -1,0 +1,76 @@
+MSc Business Analytics – Exam 1
+===============================
+
+Instructions:
+Answer ALL questions. Use clear analytical reasoning, cite frameworks where relevant (e.g., network-effects taxonomy, AI adoption S-curve). Time allowed: 120 min.
+
+Question 1 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Here in - we will mostly start start -ups (or emerging companies) and already consolidated entities, which will use well -known innovation models based on projects."
+
+(Expected length: 3–4 sentences)
+
+Question 2 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Furthermore, the relevance of these enhanced capabilities makes it easier for such products to leverage and benefit from other networks."
+
+(Expected length: 3–4 sentences)
+
+Question 3 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Furthermore, indirect network effects can incentivize the addition of complementary products or services (Church & Gandal, 1992; Church et al., 2008; Katz & Shapiro, 1992; Rochet & Tirole, 2003, 2006; Schilling, 2002)."
+
+(Expected length: 3–4 sentences)
+
+Question 4 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"In its virtual format today has great importance to the point that some risk in - cluso life to increase their virtual reputation."
+
+(Expected length: 3–4 sentences)
+
+Question 5 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Something similar happened with bank employees dedicated to counting tickets in the box: they ended up transforming financial and commercial advisors."
+
+(Expected length: 3–4 sentences)
+
+Question 6 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Of course, it would be great to know - but we cannot, all the predictions that I heard, and based on which we will anticipate a great impact of a technology, are vain speculation."
+
+(Expected length: 3–4 sentences)
+
+Question 7 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"The maximum exponent of this position would be monopoly or oligopoly, where it is the organization - and not the market - who controls the strategy, chooses price and offer."
+
+(Expected length: 3–4 sentences)
+
+Question 8 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"Forbes, https://www.forbes.com/sites/esade/2019/01/10/from-competing-on-analytics-to-companies-as-code/ Barro, S., & Davenport, T."
+
+(Expected length: 3–4 sentences)
+
+Question 9 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"The new tools capable of improving texts and images with the generative the future appear to a future where the amplification will reach unimaginable levels."
+
+(Expected length: 3–4 sentences)
+
+Question 10 (short_answer - 10 pts):
+In your own words, explain the meaning and implications of the following statement:
+
+"This model and its variants operate on four stages: a trigger, an action (like posting), a variable reward (likes or reposts), and an investment (time spent and reputation maintenance)."
+
+(Expected length: 3–4 sentences)
+

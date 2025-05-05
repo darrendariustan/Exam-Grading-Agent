@@ -1,0 +1,9 @@
+Grading Rubric (score: description)
+========================================
+0: No answer or completely off-topic.
+2: Very limited understanding; major misconceptions; no analytics insight.
+4: Basic recall but little interpretation; minimal linkage to analytics.
+6: Adequate explanation; some correct insight but superficial or partly incorrect.
+8: Good, accurate explanation with sound analytics reasoning; minor omissions only.
+10: Excellent, nuanced interpretation demonstrating mastery of network‐effects & AI‐economics concepts, supported by data‐driven logic and scholarly language.
+notes: Apply the same scale to each question; average for exam total. A score of 7+ is considered a pass at MSc level.
