@@ -15,9 +15,9 @@ EXAM_OUTPUTS = BASE_DIR / "exam_outputs"
 STUDENT_OUTPUTS = BASE_DIR / "student_outputs"
 
 RUBRIC_FILE    = EXAM_OUTPUTS / "rubric.txt"
-QUESTIONS_FILE = EXAM_OUTPUTS / "exam1.txt"
+QUESTIONS_FILE = EXAM_OUTPUTS / "exam3.txt"
 # Adjust to the actual student PDF filename
-RESPONSE_PDF   = STUDENT_OUTPUTS / "exam1_student2.pdf"
+RESPONSE_PDF   = STUDENT_OUTPUTS / "exam3_student3.pdf"
 OUTPUT_PDF     = BASE_DIR / "graded_report_4.pdf"
 
 # 3) Extract text from inputs
