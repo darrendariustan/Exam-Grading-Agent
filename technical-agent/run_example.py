@@ -1,10 +1,10 @@
 from tech_grading_agent import grade_exam
 from pdf_to_markdown import extract_pdf_to_markdown
 
-questions_markdown = extract_pdf_to_markdown("CRA_Final_Examen_Gener_2025_CATALÀ.pdf")
-rubric_markdown = extract_pdf_to_markdown("CRA_Final_Examen_Rubric.pdf")
+questions_markdown = extract_pdf_to_markdown("technical-agent/CRA_Final_Examen_Gener_2025_CATALÀ.pdf")
+rubric_markdown = extract_pdf_to_markdown("technical-agent/CRA_Final_Examen_Rubric.pdf")
 
-with open("Respostes_MD.md", 'r', encoding='utf-8') as file:
+with open("technical-agent/Respostes_MD.md", 'r', encoding='utf-8') as file:
     content = file.read()
 
 # Student answers (for testing)

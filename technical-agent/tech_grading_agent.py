@@ -56,7 +56,11 @@ Respond ONLY with raw JSON (no markdown):
     response = openai.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
-        temperature=0  # Deterministic output
+        temperature=0,
+        top_p=1,
+        presence_penalty=0,
+        frequency_penalty=0,
+        # seed=42
     )
 
     # 4. Parse LLM response (strip markdown)
