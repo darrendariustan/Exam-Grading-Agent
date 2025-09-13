@@ -33,7 +33,7 @@ cd Agents_4_Education
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 ```
 
 ### 3. Install dependencies
@@ -61,14 +61,21 @@ OPENAI_API_KEY=your_openai_api_key
 
 Each folder has its own `run_example.py`.
 
-First, change to the directory of the desired prototype (e.g. `multi-agent`):
+First, change to the directory of the desired prototype:
 
 ```bash
-cd multi-agent
+cd multi-agent  # For the web interface
+# OR
+cd narrative-agent  # For the narrative agent example
+# OR
+cd technical-agent  # For the technical agent example
 ```
 
 Run the example with this command:
 
 ```bash
+# For multi-agent web interface:
+python gradio_ui_1.py
+
+# For other agents:
 python run_example.py
-```
