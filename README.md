@@ -1,4 +1,4 @@
-# Agents 4 Education (Master’s Capstone)
+# Agentic AI for Exam Grading (Master Project)
 
 This repository collects three prototype exam‑grading systems—one each for technical, narrative/strategy and VC‑pitch exams—and a work‑in‑progress multi‑agent orchestration built with the OpenAI Agents SDK. Each subfolder contains an independent end‑to‑end example; the `multi‑agent` folder shows how they can be combined with triage, guardrails and handoffs.
 
