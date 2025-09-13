@@ -150,4 +150,4 @@ vc_tab = gr.Interface(
     title="VC Pitch Grader"
 )
 
-gr.TabbedInterface([exam_tab, vc_tab], ["Text-based Exams", "VC Pitch Grading"]).launch()
+gr.TabbedInterface([exam_tab, vc_tab], ["Text-based Exams", "VC Pitch Grading"]).launch(share=True)
