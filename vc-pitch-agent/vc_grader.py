@@ -3,7 +3,6 @@ import sys
 import json
 import openai
 import librosa
-import soundfile as sf
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -57,7 +56,8 @@ def transcribe(mp3_path: str) -> str:
     """Return transcript from Whisper, caching results."""
     cache_file = os.path.join(CACHE_DIR, os.path.basename(mp3_path) + ".txt")
     if os.path.exists(cache_file):
-        return open(cache_file).read()
+        with open(cache_file, "r", encoding="utf-8") as f:
+            return f.read()
 
     with open(mp3_path, "rb") as audio_file:
         resp = openai.audio.transcriptions.create(
@@ -67,7 +67,7 @@ def transcribe(mp3_path: str) -> str:
         )
     # resp is a string when response_format="text"
     transcript = resp if isinstance(resp, str) else resp.get("text", "")
-    with open(cache_file, "w") as f:
+    with open(cache_file, "w", encoding="utf-8") as f:
         f.write(transcript)
     return transcript
 
@@ -123,7 +123,7 @@ def grade_pitch(mp3_path: str) -> dict:
 # 5 – Entry point
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python vc_grader_v3.py <path/to/pitch.mp3>")
+        print("Usage: python vc_grader.py <path/to/pitch.mp3>")
         sys.exit(1)
 
     result = grade_pitch(sys.argv[1])

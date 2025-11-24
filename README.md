@@ -69,6 +69,8 @@ cd multi-agent  # For the web interface
 cd narrative-agent  # For the narrative agent example
 # OR
 cd technical-agent  # For the technical agent example
+# OR
+cd vc-pitch-agent  # For the VC pitch agent example
 ```
 
 Run the example with this command:
@@ -79,3 +81,6 @@ python gradio_ui_1.py
 
 # For other agents:
 python run_example.py
+```
+
+> 📝 **Note:** For deployment instructions and troubleshooting, see [multi-agent/DEPLOYMENT_GUIDE.md](multi-agent/DEPLOYMENT_GUIDE.md)

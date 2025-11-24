@@ -3,7 +3,6 @@ import os
 import time
 import json
 import pdfplumber
-import librosa
 import pandas as pd
 from pathlib import Path
 from openai import OpenAIError, RateLimitError, APIConnectionError, Timeout
@@ -18,44 +17,6 @@ MAX_RETRIES = 3
 INITIAL_BACKOFF = 2.0
 RUBRIC_CACHE_DIR = os.path.join(os.getcwd(), "cache")
 os.makedirs(RUBRIC_CACHE_DIR, exist_ok=True)
-
-# Grading rubric for VC pitch
-RUBRIC_VC = """
-You are a seasoned VC pitch grader. For a {{duration}}-minute audio pitch, give each dimension a score from 1 (poor) to 10 (excellent), using the following anchors:
-
-1. Problem Clarity  
-   • 1–3: No clear problem stated, listener confused  
-   • 4–6: Problem mentioned but lacks context or urgency  
-   • 7–8: Problem clearly described with context  
-   • 9–10: Problem statement is crisp, impactful, and immediately compelling
-
-2. Market Evidence  
-   • 1–3: No market data or vague claims  
-   • 4–6: Qualitative market description, no numbers  
-   • 7–8: One clear quantitative metric (TAM, growth rate)  
-   • 9–10: Multiple strong data points (TAM, traction, growth) cited
-
-3. Solution Differentiation  
-   • 1–3: Solution not differentiated, generic  
-   • 4–6: Mentions a unique feature but no defense  
-   • 7–8: Clearly highlights one defensible advantage  
-   • 9–10: Demonstrates multiple, well-justified differentiators or proprietary edge
-
-4. Delivery & Pacing  
-   • 1–3: Monotone or too fast/slow (outside 80–200 WPM), frequent long pauses (>30 %)  
-   • 4–6: Understandable but some pacing issues (WPM 90–210, pauses 20–30 %)  
-   • 7–8: Good pace (110–160 WPM), pauses <20 %  
-   • 9–10: Engaging tone, ideal pacing (120–150 WPM), minimal pauses (<10 %)
-
-Return valid JSON EXACTLY in this format (no extra keys):
-{
-  "Problem": <1–10>,
-  "Market": <1–10>,
-  "Solution": <1–10>,
-  "Delivery": <1–10>,
-  "Feedback": "<one sentence actionable feedback for each anchor>"
-}
-"""
 
 # Technical agent prompt
 TECHNICAL_PROMPT_TEMPLATE = """
@@ -165,41 +126,6 @@ def extract_pdf_to_markdown(pdf_path: str) -> str:
             for tbl in page.extract_tables() or []:
                 out += "\n" + convert_table_to_markdown(tbl)
     return out
-
-
-def transcribe(mp3_path: str) -> str:
-    """Return transcript from Whisper with simple caching logic."""
-    cache_file = os.path.join(RUBRIC_CACHE_DIR, os.path.basename(mp3_path) + ".txt")
-    if os.path.exists(cache_file):
-        return open(cache_file, "r").read()
-
-    with open(mp3_path, "rb") as f:
-        resp = openai.audio.transcriptions.create(
-            file=f,
-            model="whisper-1",
-            response_format="text"
-        )
-    transcript = resp if isinstance(resp, str) else resp.get("text", "")
-    with open(cache_file, "w") as f:
-        f.write(transcript)
-    return transcript
-
-
-def analyze_audio(mp3_path: str) -> Dict[str, Any]:
-    y, sr = librosa.load(mp3_path, sr=16000, mono=True)
-    duration = len(y) / sr
-    transcript = transcribe(mp3_path)
-    word_count = len(transcript.split())
-    wpm = word_count / (duration / 60) if duration else 0
-    intervals = librosa.effects.split(y, top_db=30)
-    voiced = sum((e - s) for s, e in intervals) / sr
-    silence_ratio = (duration - voiced) / duration if duration else 0
-    return {
-        "duration": duration,
-        "wpm": wpm,
-        "silence_ratio": silence_ratio,
-        "transcript": transcript
-    }
 
 # ========== GRADERS ==========
 def call_with_backoff(**kwargs):
