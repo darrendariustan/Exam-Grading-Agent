@@ -176,6 +176,9 @@ cython_debug/
 # Ruff stuff:
 .ruff_cache/
 
+# Gradio runtime data
+.gradio/
+
 # PyPI configuration file
 .pypirc
 .env

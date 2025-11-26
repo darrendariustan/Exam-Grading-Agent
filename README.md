@@ -59,18 +59,11 @@ OPENAI_API_KEY=your_openai_api_key
 
 ### 5. Running the examples
 
-Each folder has its own `run_example.py`.
 
 First, change to the directory of the desired prototype:
 
 ```bash
 cd multi-agent  # For the web interface
-# OR
-cd narrative-agent  # For the narrative agent example
-# OR
-cd technical-agent  # For the technical agent example
-# OR
-cd vc-pitch-agent  # For the VC pitch agent example
 ```
 
 Run the example with this command:
@@ -78,7 +71,4 @@ Run the example with this command:
 ```bash
 # For multi-agent web interface:
 python gradio_ui_1.py
-
-# For other agents:
-python run_example.py
 ```
