@@ -6,6 +6,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# old versions of gradio ui files
+gradio_ui_1.py
+gradio_ui_unified.py
+
 # C extensions
 *.so
 

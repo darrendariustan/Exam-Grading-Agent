@@ -16,26 +16,51 @@ from typing import Dict, Any, Optional, Tuple
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Add paths to import specialist agents
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'technical-agent'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'narrative-agent'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'vc-pitch-agent'))
+# Add paths to import specialist agents (use absolute paths)
+_base_dir = os.path.dirname(os.path.abspath(__file__))
+_parent_dir = os.path.dirname(_base_dir)
+_technical_agent_path = os.path.join(_parent_dir, 'technical-agent')
+_narrative_agent_path = os.path.join(_parent_dir, 'narrative-agent')
+_vc_pitch_agent_path = os.path.join(_parent_dir, 'vc-pitch-agent')
+
+sys.path.insert(0, _technical_agent_path)
+sys.path.insert(0, _narrative_agent_path)
+sys.path.insert(0, _vc_pitch_agent_path)
 
 # Import specialist agents
 try:
     from tech_grading_agent import grade_exam as grade_technical_exam
-except ImportError:
+except ImportError as e:
+    print(f"Warning: Could not import technical agent: {e}")
+    grade_technical_exam = None
+except Exception as e:
+    print(f"Warning: Error importing technical agent: {e}")
+    import traceback
+    traceback.print_exc()
     grade_technical_exam = None
 
 try:
     from exam_grader_agents import grade_exam as grade_narrative_exam
-except ImportError:
+except ImportError as e:
+    print(f"Warning: Could not import narrative agent from {_narrative_agent_path}: {e}")
+    print(f"  Narrative agent path exists: {os.path.exists(_narrative_agent_path)}")
+    if os.path.exists(_narrative_agent_path):
+        print(f"  Files in narrative-agent: {os.listdir(_narrative_agent_path)}")
+    grade_narrative_exam = None
+except Exception as e:
+    print(f"Warning: Error importing narrative agent: {e}")
+    import traceback
+    traceback.print_exc()
     grade_narrative_exam = None
 
 try:
-    from vc_grader import grade_pitch
+    # Try new agent version first, fallback to old
+    from vc_grader_agent import grade_pitch_agent as grade_pitch
 except ImportError:
-    grade_pitch = None
+    try:
+        from vc_grader import grade_pitch
+    except ImportError:
+        grade_pitch = None
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -79,38 +104,74 @@ def extract_pdf_to_markdown(pdf_path: str) -> str:
 
 # ========== TRIAGE AGENT ==========
 
-TRIAGE_PROMPT = """You are a triage agent that classifies exam types. Analyze the exam content and determine the most appropriate grading agent.
+TRIAGE_PROMPT = """You are a triage agent that classifies exam types and input formats. Analyze the input and determine the most appropriate grading agent.
 
-Exam types:
+Input types:
+- "text": Written exam questions and responses (PDF, TXT, MD files)
+- "audio": Audio/video pitch presentations (MP3, WAV, MP4 files)
+
+Exam types (for text inputs):
 - "technical": Factual knowledge, mathematical reasoning, coding, technical problem-solving
 - "narrative": Open-ended responses, strategic thinking, reflective writing, business cases, essays
-- "vc_pitch": Audio/video pitches, presentations, entrepreneurial pitches
+- "vc_pitch": Audio/video pitches, presentations, entrepreneurial pitches (for audio inputs)
 
 Consider:
-- Presence of mathematical formulas, code, technical diagrams → technical
-- Presence of essay questions, case studies, strategic analysis → narrative
-- Audio/video files → vc_pitch
+- Audio/video files → input_type: "audio", exam_type: "vc_pitch"
+- Text files with mathematical formulas, code, technical diagrams → input_type: "text", exam_type: "technical"
+- Text files with essay questions, case studies, strategic analysis → input_type: "text", exam_type: "narrative"
 
 Respond ONLY with JSON:
 {
+  "input_type": "text" | "audio",
   "exam_type": "technical" | "narrative" | "vc_pitch",
   "confidence": 0.0-1.0,
   "reasoning": "brief explanation"
 }
 """
 
-def triage_exam_type(questions_text: str, rubric_text: str = "") -> Dict[str, Any]:
+def detect_input_type(file_path: str = None, audio_file: str = None) -> str:
     """
-    Triage agent: Automatically classifies exam type.
+    Detect input type from file extensions.
     
     Args:
-        questions_text: Extracted exam questions
-        rubric_text: Optional rubric text
+        file_path: Path to text file (PDF, TXT, MD)
+        audio_file: Path to audio file (MP3, WAV, etc.)
         
     Returns:
-        Dict with exam_type, confidence, reasoning
+        "text" or "audio"
+    """
+    if audio_file:
+        return "audio"
+    if file_path:
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext in [".mp3", ".wav", ".mp4", ".m4a", ".ogg"]:
+            return "audio"
+        return "text"
+    return "text"
+
+def triage_exam_type(questions_text: str = "", rubric_text: str = "", input_type: str = "text") -> Dict[str, Any]:
+    """
+    Triage agent: Automatically classifies exam type and input format.
+    
+    Args:
+        questions_text: Extracted exam questions (for text inputs)
+        rubric_text: Optional rubric text
+        input_type: "text" or "audio" (detected from file)
+        
+    Returns:
+        Dict with input_type, exam_type, confidence, reasoning
     """
     try:
+        if input_type == "audio":
+            # Audio inputs are always VC pitch
+            return {
+                "input_type": "audio",
+                "exam_type": "vc_pitch",
+                "confidence": 1.0,
+                "reasoning": "Audio file detected - routing to VC pitch agent"
+            }
+        
+        # Text input - analyze content
         combined_text = f"Questions:\n{questions_text}\n\n"
         if rubric_text:
             combined_text += f"Rubric:\n{rubric_text}\n"
@@ -126,10 +187,12 @@ def triage_exam_type(questions_text: str, rubric_text: str = "") -> Dict[str, An
         )
         
         result = json.loads(response.choices[0].message.content)
+        result["input_type"] = "text"  # Ensure consistency
         return result
     except Exception as e:
         # Fallback to narrative if triage fails
         return {
+            "input_type": "text",
             "exam_type": "narrative",
             "confidence": 0.5,
             "reasoning": f"Triage failed: {str(e)}, defaulting to narrative"
@@ -216,6 +279,9 @@ def route_to_agent(
                 answers_text=responses,
                 rubric_markdown=rubric if rubric else None
             )
+            # Handle None return (parsing error)
+            if result is None:
+                return {"error": "Technical agent failed to parse response"}
             # Normalize output format
             if result and ("question_1" in result or "error" in result):
                 return result
@@ -258,11 +324,12 @@ def route_to_agent(
 # ========== MAIN ORCHESTRATOR ==========
 
 def orchestrate_grading(
-    exam_text: str,
-    student_response: str,
+    exam_text: str = "",
+    student_response: str = "",
     rubric_text: str = "",
     exam_type_override: Optional[str] = None,
     enable_triage: bool = True,
+    audio_file: Optional[str] = None,
     **kwargs
 ) -> Dict[str, Any]:
     """
@@ -285,24 +352,42 @@ def orchestrate_grading(
     }
     
     try:
-        # Step 1: Guardrails - Input validation
-        is_valid, error_msg = validate_inputs(exam_text, student_response, 
-                                             exam_type_override or "narrative")
-        if not is_valid:
-            return {"error": f"Guardrail validation failed: {error_msg}"}
+        # Step 0: Detect input type
+        input_type = detect_input_type(
+            file_path=kwargs.get("exam_file_path"),
+            audio_file=audio_file
+        )
         
-        # Step 2: Quality checks
-        quality = check_content_quality(exam_text, student_response)
-        result["orchestration_metadata"]["quality_checks"] = quality
+        # Step 1: Guardrails - Input validation
+        if input_type == "audio":
+            if not audio_file:
+                return {"error": "Audio file is required for VC pitch grading"}
+            # Skip text validation for audio
+        else:
+            is_valid, error_msg = validate_inputs(exam_text, student_response, 
+                                                 exam_type_override or "narrative")
+            if not is_valid:
+                return {"error": f"Guardrail validation failed: {error_msg}"}
+        
+        # Step 2: Quality checks (only for text inputs)
+        if input_type == "text":
+            quality = check_content_quality(exam_text, student_response)
+            result["orchestration_metadata"]["quality_checks"] = quality
+        else:
+            result["orchestration_metadata"]["quality_checks"] = {
+                "input_type": "audio",
+                "audio_file": audio_file
+            }
         
         # Step 3: Triage (if enabled and no override)
         if enable_triage and not exam_type_override:
-            triage_result = triage_exam_type(exam_text, rubric_text)
+            triage_result = triage_exam_type(exam_text, rubric_text, input_type)
             exam_type = triage_result.get("exam_type", "narrative")
             result["orchestration_metadata"]["triage"] = triage_result
         else:
-            exam_type = exam_type_override or "narrative"
+            exam_type = exam_type_override or ("vc_pitch" if input_type == "audio" else "narrative")
             result["orchestration_metadata"]["triage"] = {
+                "input_type": input_type,
                 "exam_type": exam_type,
                 "confidence": 1.0,
                 "reasoning": "Manual override or triage disabled"
@@ -314,6 +399,7 @@ def orchestrate_grading(
             questions=exam_text,
             responses=student_response,
             rubric=rubric_text,
+            mp3_path=audio_file,
             **kwargs
         )
         

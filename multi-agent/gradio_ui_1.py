@@ -134,11 +134,17 @@ def handle_exam(pdf_path, rubric_path, student_response_file, exam_type, enable_
                 "orchestration": metadata
             }
             
-            # Save results to JSON and PDF
+            # Save results to JSON and PDF (only for download, not auto-saved to folder)
             agent_used = metadata.get("agent_used", exam_type or "narrative")
             base_name = f"{agent_used}_grade_output"
             json_path = base_name + ".json"
             pdf_output_path = base_name + ".pdf"
+
+            # Create files only for Gradio download (temporary)
+            import tempfile
+            temp_dir = tempfile.gettempdir()
+            json_path = os.path.join(temp_dir, json_path)
+            pdf_output_path = os.path.join(temp_dir, pdf_output_path)
 
             try:
                 with open(json_path, "w", encoding="utf-8") as f:
@@ -146,6 +152,8 @@ def handle_exam(pdf_path, rubric_path, student_response_file, exam_type, enable_
                 json_to_pdf(grading_result, pdf_output_path)
             except Exception as e:
                 print(f"Warning: Could not save output files: {str(e)}")
+                json_path = None
+                pdf_output_path = None
 
             return json.dumps(grading_result, indent=2, ensure_ascii=False), json_path, pdf_output_path, metadata_text
         
@@ -226,10 +234,12 @@ def handle_vc_pitch(audio_file):
         if "error" in result:
             return json.dumps(result, indent=2), None, None
         
-        # Save results to JSON and PDF
+        # Save results to JSON and PDF (only for download, not auto-saved to folder)
+        import tempfile
+        temp_dir = tempfile.gettempdir()
         base_name = "vc_pitch_grade_output"
-        json_path = base_name + ".json"
-        pdf_path = base_name + ".pdf"
+        json_path = os.path.join(temp_dir, base_name + ".json")
+        pdf_path = os.path.join(temp_dir, base_name + ".pdf")
 
         try:
             with open(json_path, "w", encoding="utf-8") as f:
@@ -237,6 +247,8 @@ def handle_vc_pitch(audio_file):
             json_to_pdf(result, pdf_path)
         except Exception as e:
             print(f"Warning: Could not save output files: {str(e)}")
+            json_path = None
+            pdf_path = None
         
         return json.dumps(result, indent=2, ensure_ascii=False), json_path, pdf_path
 

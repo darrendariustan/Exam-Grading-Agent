@@ -63,15 +63,40 @@ Respond ONLY with raw JSON (no markdown):
         # seed=42
     )
 
-    # 4. Parse LLM response (strip markdown)
-    content = response.choices[0].message.content
+    # 4. Parse LLM response (strip markdown and "json" prefix)
+    content = response.choices[0].message.content.strip()
+    
+    # Remove markdown code blocks
     if content.startswith("```"):
-        content = content.strip().split("```")[1]
+        parts = content.split("```")
+        if len(parts) > 1:
+            content = parts[1]
+            # Remove language identifier if present (e.g., "json\n")
+            if content.startswith("json"):
+                content = content[4:].lstrip()
+            content = content.strip()
+    
+    # Remove "json" prefix if present (some models add this)
+    if content.lower().startswith("json"):
+        content = content[4:].lstrip()
+    
+    # Try to find JSON object in content
     try:
         result = json.loads(content)
     except json.JSONDecodeError:
-        print("Error: Could not parse JSON from LLM response.")
-        print("Response:", content)
-        return None
+        # Try to extract JSON from content if it's embedded in text
+        import re
+        json_match = re.search(r'\{.*\}', content, re.DOTALL)
+        if json_match:
+            try:
+                result = json.loads(json_match.group(0))
+            except json.JSONDecodeError:
+                print("Error: Could not parse JSON from LLM response.")
+                print("Response:", content[:500])  # Print first 500 chars
+                return {"error": "Could not parse JSON from LLM response", "raw": content[:500]}
+        else:
+            print("Error: Could not parse JSON from LLM response.")
+            print("Response:", content[:500])  # Print first 500 chars
+            return {"error": "Could not parse JSON from LLM response", "raw": content[:500]}
 
     return result

@@ -8,10 +8,15 @@ import pickle
 from dotenv import load_dotenv
 import openai
 import pdfplumber
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import inch
-from openai import OpenAIError, RateLimitError, APIConnectionError, Timeout
+
+# Optional imports for PDF generation
+try:
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.units import inch
+    REPORTLAB_AVAILABLE = True
+except ImportError:
+    REPORTLAB_AVAILABLE = False
 
 # Load environment variables from .env (if present)
 load_dotenv()
@@ -71,15 +76,12 @@ def extract_text(path: Path) -> str:
 
 # Retry wrapper with exponential backoff
 def call_with_backoff(**kwargs):
+    from openai import RateLimitError, APIConnectionError, APITimeoutError
     backoff = INITIAL_BACKOFF
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             return openai.chat.completions.create(**kwargs)
-        except (RateLimitError, OpenAIError):
-            if attempt == MAX_RETRIES:
-                raise
-            time.sleep(backoff * (2 ** (attempt - 1)))
-        except (APIConnectionError, Timeout):
+        except (RateLimitError, APIConnectionError, APITimeoutError) as e:
             if attempt == MAX_RETRIES:
                 raise
             time.sleep(backoff * (2 ** (attempt - 1)))
@@ -155,6 +157,8 @@ def grade_exam(rubric: str, questions: str, responses: str) -> dict:
 
 # Create PDF report
 def create_pdf_report(results: dict, output_path: Path):
+    if not REPORTLAB_AVAILABLE:
+        raise ImportError("reportlab is required for PDF generation. Install it with: pip install reportlab")
     c = canvas.Canvas(str(output_path), pagesize=letter)
     width, height = letter
     margin = inch
