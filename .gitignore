@@ -9,6 +9,9 @@ __pycache__/
 # C extensions
 *.so
 
+# All md checking docs
+docs/
+
 # Distribution / packaging
 .Python
 build/
@@ -176,9 +179,3 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 .env
-
-# Deployment documentation (internal use only)
-multi-agent/DEPLOYMENT_GUIDE.md
-DEPLOY_NOW.md
-PRE_DEPLOYMENT_CHECKLIST.md
-test_setup.py

@@ -12,12 +12,26 @@ from vc_grader import grade_pitch
 
 load_dotenv()
 
+# Check API key
+if not os.getenv("OPENAI_API_KEY"):
+    print("WARNING: OPENAI_API_KEY not found in environment. Please set it in .env file.")
+
 # Utility function to extract text from various file formats
 def extract_text_from_file(file_obj):
-    if file_obj.name.endswith(".pdf"):
-        return extract_pdf_to_markdown(file_obj.name)
-    elif file_obj.name.endswith(".txt") or file_obj.name.endswith(".md"):
-        return file_obj.read().decode("utf-8")
+    if file_obj is None:
+        raise ValueError("Student response file is required")
+    
+    # Handle different Gradio file object structures
+    file_path = file_obj.name if hasattr(file_obj, 'name') else str(file_obj)
+    
+    if file_path.endswith(".pdf"):
+        return extract_pdf_to_markdown(file_path)
+    elif file_path.endswith(".txt") or file_path.endswith(".md"):
+        if hasattr(file_obj, 'read'):
+            return file_obj.read().decode("utf-8")
+        else:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return f.read()
     else:
         return "Unsupported file format"
 
@@ -33,22 +47,69 @@ def json_to_pdf(json_obj, output_path):
 
 # ========== GRADER HANDLERS ==========
 def handle_exam(pdf_path, rubric_path, student_response_file, exam_type):
-    questions_md = extract_pdf_to_markdown(pdf_path.name)
-    rubric_md = extract_pdf_to_markdown(rubric_path.name) if rubric_path else ""
-    student_response_md = extract_text_from_file(student_response_file)
+    try:
+        # Validate required inputs
+        if pdf_path is None:
+            return json.dumps({"error": "Exam PDF is required. Please upload an exam file."}, indent=2), None, None
+        
+        if student_response_file is None:
+            return json.dumps({"error": "Student response file is required. Please upload a student response file."}, indent=2), None, None
+        
+        # Check API key
+        if not os.getenv("OPENAI_API_KEY"):
+            return json.dumps({"error": "OPENAI_API_KEY not found. Please set it in your .env file in the project root."}, indent=2), None, None
+        
+        # Extract file paths (handle different Gradio file object structures)
+        exam_file_path = pdf_path.name if hasattr(pdf_path, 'name') else str(pdf_path)
+        rubric_file_path = rubric_path.name if (rubric_path and hasattr(rubric_path, 'name')) else (str(rubric_path) if rubric_path else None)
+        
+        # Extract text from files
+        try:
+            questions_md = extract_pdf_to_markdown(exam_file_path)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to extract text from exam PDF: {str(e)}"}, indent=2), None, None
+        
+        try:
+            rubric_md = extract_pdf_to_markdown(rubric_file_path) if rubric_file_path else ""
+        except Exception as e:
+            print(f"Warning: Could not extract rubric (optional): {str(e)}")
+            rubric_md = ""
+        
+        try:
+            student_response_md = extract_text_from_file(student_response_file)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to extract text from student response: {str(e)}"}, indent=2), None, None
 
-    result = grade_exam(rubric_md, questions_md, student_response_md, exam_type=exam_type)
+        # Grade the exam
+        try:
+            result = grade_exam(rubric_md, questions_md, student_response_md, exam_type=exam_type)
+        except Exception as e:
+            return json.dumps({"error": f"Failed to grade exam: {str(e)}. Please check your API key and try again."}, indent=2), None, None
 
-    # Save results to JSON and PDF
-    base_name = f"{exam_type}_grade_output"
-    json_path = base_name + ".json"
-    pdf_path = base_name + ".pdf"
+        # Check if result contains an error
+        if isinstance(result, dict) and "error" in result:
+            return json.dumps(result, indent=2, ensure_ascii=False), None, None
 
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, indent=2, ensure_ascii=False)
-    json_to_pdf(result, pdf_path)
+        # Save results to JSON and PDF
+        base_name = f"{exam_type}_grade_output"
+        json_path = base_name + ".json"
+        pdf_output_path = base_name + ".pdf"
 
-    return json.dumps(result, indent=2, ensure_ascii=False), json_path, pdf_path
+        try:
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(result, f, indent=2, ensure_ascii=False)
+            json_to_pdf(result, pdf_output_path)
+        except Exception as e:
+            print(f"Warning: Could not save output files: {str(e)}")
+
+        return json.dumps(result, indent=2, ensure_ascii=False), json_path, pdf_output_path
+    
+    except Exception as e:
+        error_msg = f"Unexpected error: {str(e)}"
+        print(f"Error in handle_exam: {error_msg}")
+        import traceback
+        traceback.print_exc()
+        return json.dumps({"error": error_msg}, indent=2), None, None
 
 def handle_vc_pitch(audio_file):
     """Handle VC pitch grading using the standalone vc_grader module."""

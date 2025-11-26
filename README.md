@@ -82,5 +82,3 @@ python gradio_ui_1.py
 # For other agents:
 python run_example.py
 ```
-
-> 📝 **Note:** For deployment instructions and troubleshooting, see [multi-agent/DEPLOYMENT_GUIDE.md](multi-agent/DEPLOYMENT_GUIDE.md)
