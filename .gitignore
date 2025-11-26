@@ -16,6 +16,8 @@ gradio_ui_unified.py
 # All md checking docs
 docs/
 
+multi-agent/cache/
+
 # Distribution / packaging
 .Python
 build/
