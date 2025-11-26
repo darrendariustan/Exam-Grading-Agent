@@ -4,6 +4,14 @@ This repository contains a unified multi‑agent exam grading system with three 
 
 > Agents 4 Education showcases how LLM‑powered agents can collaborate to automate formative assessment across different exam types, as part of a Master’s in Business Analytics capstone project.
 
+## 🎥 Demo
+
+Watch the demo video to see the multi-agent grading system in action:
+
+[![Demo Video](Demo_Multi-Grading_Agent.mp4)](Demo_Multi-Grading_Agent.mp4)
+
+Or view directly: [`Demo_Multi-Grading_Agent.mp4`](Demo_Multi-Grading_Agent.mp4)
+
 ## Repository layout
 
 - **multi‑agent/**  
