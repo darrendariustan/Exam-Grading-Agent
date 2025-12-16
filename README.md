@@ -12,18 +12,48 @@ Watch the demo video to see the multi-agent grading system in action:
 
 Or view directly: [`Demo_Multi-Grading_Agent.mp4`](Demo_Multi-Grading_Agent.mp4)
 
-## Repository layout
+## Technical Implementation Breakdown
 
-- **multi‑agent/**  
-  Unified multi‑agent system with triage agent (auto‑classifies exam type), guardrails (input validation), and specialist agent routing (technical/narrative/VC‑pitch) with handoff mechanisms. The main interface is `batch_grading_ui.py` for batch processing multiple students.  
-- **technical‑agent/**  
-  A standalone grader for factual knowledge, mathematical reasoning, and technical problem-solving skills.​
-- **narrative‑agent/**  
-  Tailored for exams involving open-ended responses, strategic thinking, or reflective writing—particularly suited to humanities or business-oriented subjects.
-- **vc‑pitch‑agent/**
-  Focused on grading non-written final projects, such as live or recorded presentations, especially those centered around entrepreneurial or product development ideas.​
-- **.env**, **requirements.txt**, **README.md**  
-  Root‑level environment setup, dependencies and this guide.
+This repository is structured into specialized specialist agents and a central orchestration layer. Below is the technical breakdown of each component:
+
+### 📂 `multi-agent/` (Orchestration Core)
+The brain of the system, handling lifecycle management from input to final graded report.
+- **`agent_orchestrator.py`**:
+  - **Triage Mechanism**: Uses `gpt-4o-mini` with zero-shot prompting to classify inputs into *Technical*, *Narrative*, or *VC Pitch* based on content analysis (e.g., detecting equations vs. essays).
+  - **Guardrails**: Implements pre-processing checks for content length, format validity, and basic safety (e.g., script injection detection).
+  - **Handoff Logic**: Implements a resilience pattern where `Technical` failures automatically fallback to `Narrative` grading to ensure a response is always returned.
+- **`batch_grading_ui.py`**:
+  - Built with **Gradio**, supporting concurrent multi-file uploads.
+  - Features intelligent file splitting (separating Questions from Answers automatically).
+  - Generates individual PDF reports using `fpdf` and aggregates batch statistics.
+
+### 📂 `technical-agent/` (STEM Specialist)
+Focused on precision and reasoning for Math, Science, and Coding exams.
+- **`tech_grading_agent.py`**:
+  - **Model**: Leverages `gpt-4-0125-preview` (GPT-4 Turbo) for superior reasoning capabilities required for checking calculations and logic.
+  - **Prompting**: Uses strict JSON-mode prompting to ensure output consistency for downstream parsing.
+- **`pdf_to_markdown.py`**:
+  - **Extraction**: Uses `pdfplumber` to extract text and **preserve table structures**, converting them to Markdown tables so the LLM can "see" data grids correctly.
+
+### 📂 `narrative-agent/` (Humanities Specialist)
+Optimized for essays, case studies, and subjective feedback.
+- **`exam_grader_agents.py`**:
+  - **Structured Output**: Uses **OpenAI Function Calling** (`generate_exam_responses`) instead of raw JSON prompts to guarantee schema adherence for scoring.
+  - **Metrics Tracking**: Maintains a local `grading_metrics_history.pkl` to track model performance (MAE, RMSE) over time.
+  - **Reporting**: Generates professional-grade PDFs using `reportlab`.
+
+### 📂 `vc-pitch-agent/` (Audio/Multimodal Specialist)
+A pipeline for evaluating spoken presentations.
+- **`vc_grader_agent.py`**:
+  - **Audio Processing**: Uses `librosa` to compute acoustic features:
+    - **WPM (Words Per Minute)**: To measure pacing.
+    - **Silence Ratio**: To detect hesitation or confidence.
+  - **Transcription**: Calls OpenAI's **Whisper** model for high-fidelity speech-to-text.
+  - **Grading**: Uses `gpt-4o-mini` with a specialized rubric for "Problem," "Market," "Solution," and "Delivery".
+
+### Root Files
+- **`.env`**: Stores `OPENAI_API_KEY` and other sensitive configurations.
+- **`requirements.txt`**: Lists core dependencies: `openai`, `gradio`, `pdfplumber`, `librosa`, `reportlab`, `fpdf`.
 
 ## Getting started
 
