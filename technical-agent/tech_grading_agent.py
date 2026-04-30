@@ -1,14 +1,48 @@
 import openai
 import json
+import re
 
 # 1. Set OpenAI API Key
 import os
 from dotenv import load_dotenv
 load_dotenv()   # looks for a file named “.env” in cwd
-assert os.getenv("OPENAI_API_KEY"), "Missing OPENAI_API_KEY in environment"
+
+
+def is_mock_mode_enabled() -> bool:
+  return os.getenv("MOCK_MODE", "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+if os.getenv("OPENAI_API_KEY"):
+  openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
+def _estimate_question_count(text: str) -> int:
+  numbered = re.findall(r"(?im)^\s*(?:q\s*\d+|question\s*\d+|\d+[\).:])", text or "")
+  if numbered:
+    return min(max(len(numbered), 1), 10)
+  return 3
+
+
+def _mock_grade_result(questions_markdown: str) -> dict:
+  question_count = _estimate_question_count(questions_markdown)
+  result = {}
+  total = 0.0
+  for i in range(1, question_count + 1):
+    score = float(6 + (i % 3))
+    total += score
+    result[f"question_{i}"] = {
+      "score": score,
+      "feedback": "Mock feedback: clear response structure detected; add one concrete technical example."
+    }
+  result["total_score"] = round(total, 2)
+  result["mock_mode"] = True
+  return result
 
 # 2. Grading function (LLM-powered)
 def grade_exam(questions_markdown, answers_text, rubric_markdown=None, model="gpt-4-0125-preview"):
+  if is_mock_mode_enabled():
+    return _mock_grade_result(questions_markdown)
+
     # Prepare the prompt
     prompt = f"""
 You are a grading assistant for technical exams. Your role is to evaluate student responses based on the provided questions and, if available, the rubric.

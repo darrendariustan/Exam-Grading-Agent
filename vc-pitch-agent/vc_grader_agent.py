@@ -12,6 +12,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def is_mock_mode_enabled() -> bool:
+    return os.getenv("MOCK_MODE", "").strip().lower() in {"1", "true", "yes", "on"}
+
 CACHE_DIR = os.path.join(os.getcwd(), "cache")
 if not os.path.isdir(CACHE_DIR):
     os.makedirs(CACHE_DIR, exist_ok=True)
@@ -130,6 +134,17 @@ def grade_pitch_agent(mp3_path: str) -> Dict[str, Any]:
     Returns:
         Dict with Problem, Market, Solution, Delivery scores and Feedback
     """
+    if is_mock_mode_enabled():
+        return {
+            "Problem": 7,
+            "Market": 6,
+            "Solution": 7,
+            "Delivery": 8,
+            "Feedback": "Mock feedback: sharpen market sizing evidence and add a clearer moat statement.",
+            "mock_mode": True,
+            "source_audio": os.path.basename(mp3_path)
+        }
+
     wpm, silence, transcript, duration = audio_metrics(mp3_path)
     
     prompt = f"""

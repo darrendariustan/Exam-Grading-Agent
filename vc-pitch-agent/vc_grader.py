@@ -8,6 +8,10 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+
+def is_mock_mode_enabled() -> bool:
+    return os.getenv("MOCK_MODE", "").strip().lower() in {"1", "true", "yes", "on"}
+
 # Create cache directory
 CACHE_DIR = os.path.join(os.getcwd(), "cache")
 if not os.path.isdir(CACHE_DIR):
@@ -102,6 +106,17 @@ Audio metrics:
 
 # 4 – Grade the pitch
 def grade_pitch(mp3_path: str) -> dict:
+    if is_mock_mode_enabled():
+        return {
+            "Problem": 7,
+            "Market": 6,
+            "Solution": 7,
+            "Delivery": 8,
+            "Feedback": "Mock feedback: tighten market evidence and clarify product differentiation.",
+            "mock_mode": True,
+            "source_audio": os.path.basename(mp3_path)
+        }
+
     wpm, silence, transcript, duration = audio_metrics(mp3_path)
     prompt = build_prompt(transcript, wpm, silence, duration)
 

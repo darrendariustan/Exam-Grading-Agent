@@ -93,6 +93,23 @@ OPENAI_API_KEY=your_openai_api_key
 >
 > Be aware of API costs!
 
+### Optional: Run Local Mock Tests (No API key)
+
+If you want to deploy and test the full workflow without calling OpenAI, enable mock mode:
+
+```bash
+export MOCK_MODE=true
+```
+
+Then run the app as usual:
+
+```bash
+cd multi-agent
+python batch_grading_ui.py
+```
+
+In mock mode, triage and specialist grading return deterministic sample scores so you can validate routing, batch processing, downloads, and UI behavior end to end.
+
 
 
 ### 5. Running the examples

@@ -14,9 +14,13 @@ from vc_grader import grade_pitch
 
 load_dotenv()
 
+
+def is_mock_mode_enabled() -> bool:
+    return os.getenv("MOCK_MODE", "").strip().lower() in {"1", "true", "yes", "on"}
+
 # Check API key
-if not os.getenv("OPENAI_API_KEY"):
-    print("WARNING: OPENAI_API_KEY not found in environment. Please set it in .env file.")
+if not os.getenv("OPENAI_API_KEY") and not is_mock_mode_enabled():
+    print("WARNING: OPENAI_API_KEY not found in environment. Set MOCK_MODE=true for local mock runs.")
 
 # Utility function to extract text from various file formats
 def extract_text_from_file(file_obj):
@@ -58,7 +62,7 @@ def handle_exam(pdf_path, rubric_path, student_response_file, exam_type, enable_
             return json.dumps({"error": "Student response file is required. Please upload a student response file."}, indent=2), None, None, ""
         
         # Check API key
-        if not os.getenv("OPENAI_API_KEY"):
+        if not os.getenv("OPENAI_API_KEY") and not is_mock_mode_enabled():
             return json.dumps({"error": "OPENAI_API_KEY not found. Please set it in your .env file in the project root."}, indent=2), None, None, ""
         
         # Extract file paths (handle different Gradio file object structures)

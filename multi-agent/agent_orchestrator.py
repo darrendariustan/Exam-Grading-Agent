@@ -65,6 +65,11 @@ except ImportError:
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+
+def is_mock_mode_enabled() -> bool:
+    """Enable deterministic local testing without external API calls."""
+    return os.getenv("MOCK_MODE", "").strip().lower() in {"1", "true", "yes", "on"}
+
 # ========== PDF EXTRACTION UTILITY ==========
 
 def extract_pdf_to_markdown(pdf_path: str) -> str:
@@ -169,6 +174,17 @@ def triage_exam_type(questions_text: str = "", rubric_text: str = "", input_type
                 "exam_type": "vc_pitch",
                 "confidence": 1.0,
                 "reasoning": "Audio file detected - routing to VC pitch agent"
+            }
+
+        if is_mock_mode_enabled():
+            combined = f"{questions_text}\n{rubric_text}".lower()
+            technical_hints = ["code", "sql", "equation", "calculate", "algorithm", "debug"]
+            is_technical = any(token in combined for token in technical_hints)
+            return {
+                "input_type": "text",
+                "exam_type": "technical" if is_technical else "narrative",
+                "confidence": 0.85,
+                "reasoning": "MOCK_MODE enabled - heuristic triage used"
             }
         
         # Text input - analyze content
@@ -357,6 +373,7 @@ def orchestrate_grading(
             file_path=kwargs.get("exam_file_path"),
             audio_file=audio_file
         )
+        result["orchestration_metadata"]["mock_mode"] = is_mock_mode_enabled()
         
         # Step 1: Guardrails - Input validation
         if input_type == "audio":

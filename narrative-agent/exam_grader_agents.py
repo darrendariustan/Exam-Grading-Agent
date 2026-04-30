@@ -4,6 +4,7 @@ import time
 import json
 import statistics
 import pickle
+import re
 
 from dotenv import load_dotenv
 import openai
@@ -23,6 +24,50 @@ load_dotenv()
 
 # Configuration: read API key from environment
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
+def is_mock_mode_enabled() -> bool:
+    return os.getenv("MOCK_MODE", "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _estimate_question_count(questions: str) -> int:
+    numbered = re.findall(r"(?im)^\s*(?:q\s*\d+|question\s*\d+|\d+[\).:])", questions or "")
+    if numbered:
+        return min(max(len(numbered), 1), 10)
+    return 3
+
+
+def _mock_grade_exam(questions: str) -> dict:
+    count = _estimate_question_count(questions)
+    scores = []
+    for i in range(1, count + 1):
+        score = float(7 + (i % 2))
+        scores.append(
+            {
+                "question_id": i,
+                "score": score,
+                "feedback": "Mock feedback: argument is coherent; include one stronger supporting detail."
+            }
+        )
+
+    overall = round(sum(item["score"] for item in scores) / len(scores), 2) if scores else 0.0
+    return {
+        "scores": scores,
+        "overall_score": overall,
+        "general_feedback": "Mock result for deployment testing. Depth and evidence could be improved.",
+        "metrics": {
+            "num_questions": len(scores),
+            "score_variance": statistics.variance([s["score"] for s in scores]) if len(scores) > 1 else 0.0,
+            "score_mean": overall,
+            "replicability_seed": 42,
+            "response_time_seconds": 0.01,
+            "temperature_used": 0.0,
+            "historical_runs": 0,
+            "MAE_vs_mean": 0.0,
+            "RMSE_vs_mean": 0.0,
+            "mock_mode": True
+        }
+    }
 
 # Retry configuration
 MAX_RETRIES = 3
@@ -89,6 +134,9 @@ def call_with_backoff(**kwargs):
 # Grade the exam via OpenAI
 def grade_exam(rubric: str, questions: str, responses: str) -> dict:
     start_time = time.time()
+
+    if is_mock_mode_enabled():
+        return _mock_grade_exam(questions)
 
     if rubric.strip():
         system_prompt = (
